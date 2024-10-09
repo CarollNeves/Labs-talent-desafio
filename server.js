@@ -17,7 +17,6 @@ app.post('/usuarios', async (req, res) => {
 
             email: req.body.email,
             name: req.body.name,
-            age: req.body.age,
             password: req.body.password
 
 
@@ -32,9 +31,9 @@ app.post('/usuarios', async (req, res) => {
 
 app.get('/pegartodos', async (req, res) => {  /* quando acessar (/usuarios) no get cai aqui*/
 
-    const users = await prisma.user.findMany()
+    const users = await prisma.user.findFirst()
 
-    res.status(200).json(req.body)
+    res.status(200).json(users)
 })
 
 app.listen(3000)
