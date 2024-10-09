@@ -36,7 +36,20 @@ app.get('/pegartodos', async (req, res) => {  /* quando acessar (/usuarios) no g
     res.status(200).json(users)
 })
 
+
+const corsOptions = {
+    origin: '*', // Permite todas as origens, pode ser ajustado para domínios específicos
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+
+app.use(express.json());
+
 app.listen(3000)
+
+
 
 
 /* usuario: rodolfo
