@@ -31,7 +31,7 @@ app.post('/usuarios', async (req, res) => {
 
 app.get('/pegartodos', async (req, res) => {  /* quando acessar (/usuarios) no get cai aqui*/
 
-    const users = await prisma.user.findFirst()
+    const users = await prisma.user.findMany()
 
     res.status(200).json(users)
 })
