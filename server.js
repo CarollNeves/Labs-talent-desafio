@@ -2,6 +2,9 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
 // Variável global para a URL do banco de dados NeonDB
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:TjQ6faFrbAy3@ep-lingering-recipe-a5t1jr0b.us-east-2.aws.neon.tech/neondb?sslmode=require';
