@@ -5,9 +5,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
 
-
-
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://labstalentsbd_user:X4qfnKBCHejdFpnDdmmoP8TtuJYyo2Y6@dpg-cs4rv5q3esus73alfgng-a.oregon-postgres.render.com/labstalentsbd';
+
 const app = express();
 app.use(express.json());  // Endpoint para criar um novo usuário
 
