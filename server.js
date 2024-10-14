@@ -17,6 +17,19 @@ app.post('/usuarios', async (req, res) => {
         },
     });
     try {
+        console.log('Dados recebidos:', req.body);
+        
+        // Verifica se o email já está cadastrado
+        const existingUser = await prisma.user.findUnique({
+            where: {
+                email: req.body.email,
+            },
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ error: 'Email já cadastrado' });
+        }
+
         const newUser = await prisma.user.create({
             data: {
                 email: req.body.email,
@@ -24,7 +37,8 @@ app.post('/usuarios', async (req, res) => {
                 password: req.body.password,
             },
         });
-        res.status(201).json(newUser);
+        
+        res.status(201).json({ message: 'Usuário criado com sucesso', user: newUser });
     } catch (error) {
         console.error('Erro ao criar usuário:', error);
         res.status(500).json({ error: 'Erro ao criar usuário' });
