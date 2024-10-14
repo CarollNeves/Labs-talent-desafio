@@ -8,8 +8,14 @@ dotenv.config();
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://labstalentsbd_user:X4qfnKBCHejdFpnDdmmoP8TtuJYyo2Y6@dpg-cs4rv5q3esus73alfgng-a.oregon-postgres.render.com/labstalentsbd';
 
 const app = express();
-app.use(express.json());  // Endpoint para criar um novo usuário
+app.use(express.json());  
 
+const generateToken = (userId) => {
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
+};
+
+
+// Endpoint para criar um novo usuário
 app.post('/usuarios', async (req, res) => {
     const prisma = new PrismaClient({
         datasources: {
@@ -48,10 +54,11 @@ app.post('/usuarios', async (req, res) => {
 });
 
 
-//Endpoint para validar login
+// Endpoint para validar login
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
+    // Validações do email e senha
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
         return res.status(400).json({ error: 'Invalid Email format' });
     }
@@ -76,10 +83,15 @@ app.post('/login', async (req, res) => {
             return res.status(404).json({ error: 'Invalid email' });
         }
 
+        
         if (user.password !== password) {
             return res.status(404).json({ error: 'Invalid password' });
         }
-        return res.status(200).json({ message: 'Login feito com sucesso' });
+
+       
+        const token = generateToken(user.id);
+
+        return res.status(200).json({ message: 'Login feito com sucesso', token: token });
     } catch (error) {
         console.error('Erro ao fazer login:', error);
         return res.status(500).json({ error: 'Erro ao fazer login' });
@@ -87,6 +99,7 @@ app.post('/login', async (req, res) => {
         await prisma.$disconnect();
     }
 });
+
 
 // Endpoint para pegar todos os usuários
 app.get('/pegartodos', async (req, res) => {
