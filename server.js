@@ -1,8 +1,8 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
-// Variável global para a URL do banco de dados NeonDB
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 dotenv.config();
 
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://labstalentsbd_user:X4qfnKBCHejdFpnDdmmoP8TtuJYyo2Y6@dpg-cs4rv5q3esus73alfgng-a.oregon-postgres.render.com/labstalentsbd';
@@ -14,8 +14,6 @@ const generateToken = (userId) => {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
 };
 
-
-// Endpoint para criar um novo usuário
 app.post('/usuarios', async (req, res) => {
     const prisma = new PrismaClient({
         datasources: {
@@ -25,7 +23,6 @@ app.post('/usuarios', async (req, res) => {
     try {
         console.log('Dados recebidos:', req.body);
         
-        // Verifica se o email já está cadastrado
         const existingUser = await prisma.user.findUnique({
             where: {
                 email: req.body.email,
@@ -53,12 +50,9 @@ app.post('/usuarios', async (req, res) => {
     }
 });
 
-
-// Endpoint para validar login
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    // Validações do email e senha
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
         return res.status(400).json({ error: 'Invalid Email format' });
     }
@@ -83,12 +77,10 @@ app.post('/login', async (req, res) => {
             return res.status(404).json({ error: 'Invalid email' });
         }
 
-        
         if (user.password !== password) {
             return res.status(404).json({ error: 'Invalid password' });
         }
 
-       
         const token = generateToken(user.id);
 
         return res.status(200).json({ message: 'Login feito com sucesso', token: token });
@@ -100,8 +92,6 @@ app.post('/login', async (req, res) => {
     }
 });
 
-
-// Endpoint para pegar todos os usuários
 app.get('/pegartodos', async (req, res) => {
     const prisma = new PrismaClient({
         datasources: {
@@ -129,7 +119,6 @@ app.get('/pegartodos', async (req, res) => {
 });
 
 app.put('/editarusuarios/:id', async (req, res) => {
-
     const prisma = new PrismaClient({
         datasources: {
             db: { url: DATABASE_URL },
@@ -155,8 +144,8 @@ app.put('/editarusuarios/:id', async (req, res) => {
         await prisma.$disconnect();
     }
 });
-app.delete('/deletarusuarios/:id', async (req, res) => {
 
+app.delete('/deletarusuarios/:id', async (req, res) => {
     const prisma = new PrismaClient({
         datasources: {
             db: { url: DATABASE_URL },
@@ -176,19 +165,16 @@ app.delete('/deletarusuarios/:id', async (req, res) => {
         await prisma.$disconnect();
     }
 });
+
 const corsOptions = {
-    origin: '*', // Permite todas as origens, pode ser ajustado para domínios específicos
+    origin: 'http://localhost:5173', 
+    credentials: true, 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
 });
-
-
-
-
-
-
