@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 dotenv.config();
 
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://labstalentsbd_user:X4qfnKBCHejdFpnDdmmoP8TtuJYyo2Y6@dpg-cs4rv5q3esus73alfgng-a.oregon-postgres.render.com/labstalentsbd';
-const PORT = process.env.PORT || 3000;
+
 
 const app = express();
 app.use(express.json());
@@ -98,7 +98,7 @@ app.put('/editarusuarios/:id', async (req, res) => {
             where: { id: parseInt(req.params.id) },
             data: { email: req.body.email, name: req.body.name, password: req.body.password },
         });
-        res.status(201).json(updatedUser);
+        res.status(200).json(updatedUser);
     } catch (error) {
         console.error('Erro ao editar usuário:', error);
         res.status(500).json({ error: 'Erro ao editar usuário' });
